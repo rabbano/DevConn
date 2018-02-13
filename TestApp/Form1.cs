@@ -21,5 +21,10 @@ namespace TestApp
         {
             label1.Text = "Hi";
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            label1.Text = "Buy";
+        }
     }
 }
