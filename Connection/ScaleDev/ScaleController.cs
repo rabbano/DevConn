@@ -12,7 +12,7 @@ namespace Connection
         public bool Enabled { get; set; }
         public int RS485Num;
         public int SendLettersCounter;
-        public int RecieveLettersCounter;
+        public int RecieveLettersCounter { get; private set; } = 0; //полученных хороших ответов
         public int ErrAnswerLenghtCounter;
         public int NoAnswerCounter;
         public int NoAnswerTime = 50;

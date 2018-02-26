@@ -17,7 +17,8 @@ namespace Connection
         public DateTime OpenPortTime { get; private set; }
         public int DelayReopenPort { get; private set; }=0;
         public int OpenPortCounter { get; private set; } = 0;
-        private SerialPort _serialPort;
+        public int ErrManyBytes { get; private set; } = 0;//ошибка много данных в порту
+        internal SerialPort _serialPort;
         private int _comPortNum; //номер Com порта
         private int _baudRate; //Скорость порта
         private Parity _parity; //Parity порта
@@ -114,7 +115,10 @@ namespace Connection
                     }
                     else if (PortState == 2)//если открыт нормально
                     {
-
+                        foreach (var smart in SmartList)
+                        {
+                            smart.GetSmartState(this);
+                        }
                     }
                     #endregion
                     //Counter++;
@@ -140,11 +144,10 @@ namespace Connection
             sc.RS485Num = RS485Num;
             sc.LostConnectionDataCount = (LostConnectionDataCount > 0) ? LostConnectionDataCount : 20;
             sc.SleepTime = (SleepTime > 0) ? SleepTime : 50;
-            //sc.OnSartoMsg += this.OnConnMsg;
             this.SmartList.Add(sc);
         }
-
         #endregion
+
         public DevConnection(int TCPPortNum, string IPAddress)  //constructor for TCP
         {
             _connectionType = 2;

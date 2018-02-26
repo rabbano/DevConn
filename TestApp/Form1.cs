@@ -24,7 +24,7 @@ namespace TestApp
         private void button1_Click(object sender, EventArgs e)
         {
             //DevConnection NewConnection = new DevConnection("Соединение "+ ConnCounter.ToString(), 1, 9600, 0, 8, 1);
-            ConnList.Add(new DevConnection("Соединение " + ConnList.Count().ToString(), ConnList.Count()+1, 9600, 0, 8, 1));
+            ConnList.Add(new DevConnection("Соединение " + ConnList.Count().ToString(), ConnList.Count()+1, 19200, 0, 8, 1));
             //ConnList[ConnList.Count() - 1].Counter = ConnList.Count() * 1000;
             //ConnList.Add(NewConnection);
         }
@@ -40,13 +40,13 @@ namespace TestApp
             label1.Text = ConnList.Count().ToString();
             foreach (DevConnection dc in ConnList)
             {
-                label1.Text += " - " + dc.PortState.ToString();
+                label1.Text += " - " + dc.ErrManyBytes.ToString();
             }
         }
 
         private void button2_Click_1(object sender, EventArgs e)
         {
-            ConnList[0].AddSmart("Smart 1", true, 1, 0, 0);
+            ConnList[0].AddSmart("Smart 1", false, 1, 0, 0);
             //ConnList.RemoveAt(0);
         }
 
