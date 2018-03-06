@@ -1,25 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Globalization;
+
 
 namespace Connection
 {
     public class ScaleController
     {
-        public string Name { get; set; }
-        public bool Enabled { get; set; }
-        public int RS485Num;
-        public int SendLettersCounter;
-        public int RecieveLettersCounter { get; private set; } = 0; //полученных хороших ответов
-        public int ErrAnswerLenghtCounter;
-        public int NoAnswerCounter;
-        public int NoAnswerTime = 50;
-        public int LostConnectionDataCount=20;
+        public string Name { get; set; } = string.Empty;//имя прибора
+        public int SleepTime { get; set; } = 100; //Время ожидания ответа
+        public int NoAnswerLimit { get; set; } = 20; //количестов опросов в который не пришел ответ, считается потеря связи
+        public bool isActivExchangeMode { get; set; } = false; //режим обмена с прибором, по запросу или прослушивать
+        protected string uiSep = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
 
-        public int SleepTime = 100;
-        public bool isActivExchangeMode; //режим обмена с прибором, по запросу или прослушивать
+
+        //public int NoAnswerTime = 50;
+
+
+
+
 
     }
 }

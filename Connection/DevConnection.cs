@@ -17,33 +17,48 @@ namespace Connection
         public DateTime OpenPortTime { get; private set; }
         public int DelayReopenPort { get; private set; }=0;
         public int OpenPortCounter { get; private set; } = 0;
-        public int ErrManyBytes { get; private set; } = 0;//ошибка много данных в порту
+        public int ErrManyBytes { get; set; } = 0;//ошибка много данных в порту
         internal SerialPort _serialPort;
         private int _comPortNum; //номер Com порта
         private int _baudRate; //Скорость порта
-        private Parity _parity; //Parity порта
+        private Parity _parity; //Parity порта //0-Even, 1-Mark, 2-None, 3-Odd, 4-Space; 
         private int _byteSize; //ByteSize порта
         private StopBits _stopBits; //StopBits порта
         private bool _threadWorkDone = false;//флаг окончания работы потока
         private int _threadSleepTime=0;
         private Thread _connThread;
 
-        //private byte _portState=1;
+
+        public List<UtilcellSmart> SmartList;
+        public List<MicrosimM06> M06List;
+
+
         public byte PortState { get; private set; } = 1;//состояние, 1- не открывался, 2- открывался, но с ошибкой, 3- нормально открылся
         //{
         //    get => _portState;
         //}
         private byte _connectionType = 0;//тип соединения, 1- ComPort, 2- TCP
+
         public byte ConnectionType
         {
             get => _connectionType;
         }
-        public DevConnection(string Name, int ComPortNum, int BaudRate, Parity Parity, int ByteSize, int StopBit)  //constructor for COMPORT
+
+        public DevConnection(string Name, int ComPortNum, int BaudRate, int Parity, int ByteSize, int StopBit, int DelayReopenPort)  //constructor for COMPORT
         {
             this.Name = Name;
             _comPortNum = ComPortNum;
             _baudRate = BaudRate;
-            _parity = Parity;
+            this.DelayReopenPort = DelayReopenPort;
+            switch (Parity)
+            {
+                case 0: _parity = System.IO.Ports.Parity.Even; break;
+                case 1: _parity = System.IO.Ports.Parity.Mark; break;
+                case 2: _parity = System.IO.Ports.Parity.None; break;
+                case 3: _parity = System.IO.Ports.Parity.Odd; break;
+                case 4: _parity = System.IO.Ports.Parity.Space; break;
+                default: _parity = System.IO.Ports.Parity.None; break;
+            }
             _byteSize = ByteSize;
             switch (StopBit)
             {
@@ -62,21 +77,18 @@ namespace Connection
             _connThread = new Thread(new ThreadStart(ThreadMethod));
             _connThread.Start();
         }
+
         public void CloseConnection()
         {
             _threadWorkDone = true;
             _connThread.Join();
-            if (PortState == 2)
+            if (PortState == 3)
             {
                 _serialPort.Close();
                 PortState = 1;
             }
         }
-        ~DevConnection()  // destructor
-        {
-            Name = "";
-            _connectionType = 100;
-        }
+
         private void ThreadMethod()
         {
             while (!_threadWorkDone)
@@ -89,62 +101,84 @@ namespace Connection
                         OpenPortTime = DateTime.Now;
                         try
                         {
+                            OpenPortCounter++;
                             _serialPort = new SerialPort("COM" + _comPortNum.ToString(), _baudRate, _parity, _byteSize, _stopBits);
                             _serialPort.Open();
-                            PortState = 2;
+                            PortState = 3;
                         }
                         catch (Exception)
                         {
-                            PortState = 3;
+                            PortState = 2;
                         }                        
                     }
-                    else if ((DelayReopenPort != 0)&&(PortState == 3)&&((DateTime.Now - OpenPortTime).TotalSeconds>= DelayReopenPort))
+                    else if ((DelayReopenPort != 0)&&(PortState == 2)&&((DateTime.Now - OpenPortTime).TotalSeconds>= DelayReopenPort))
                     {
                         OpenPortTime = DateTime.Now;
                         try
                         {
-                            _serialPort = new SerialPort("COM" + _comPortNum.ToString(), _baudRate, _parity, _byteSize, _stopBits);
+                            //_serialPort = new SerialPort("COM" + _comPortNum.ToString(), _baudRate, _parity, _byteSize, _stopBits);
+                            OpenPortCounter++;
                             _serialPort.Open();
-                            PortState = 2;
+                            PortState = 3;
                         }
                         catch (Exception)
                         {
-                            PortState = 3;
-                        }
-
-                    }
-                    else if (PortState == 2)//если открыт нормально
-                    {
-                        foreach (var smart in SmartList)
-                        {
-                            smart.GetSmartState(this);
+                            PortState = 2;
                         }
                     }
                     #endregion
+                    else 
+                    {
+
+                        if (M06List != null)
+                            foreach (var M06 in M06List)
+                            {
+                                _threadSleepTime += M06.GetM06State(this);
+                            }
+
+                        if (SmartList != null)
+                            foreach (var smart in SmartList)
+                            {
+                                _threadSleepTime += smart.GetSmartState(this);
+                            }
+
+                    }
+
                     //Counter++;
-                    if (_threadSleepTime == 0)
+                    if (_threadSleepTime == 0)//задержка если никто другой не сделал, чтобы не нагружать поток
                         Thread.Sleep(100);
-                    else
-                        Thread.Sleep(_threadSleepTime);
                     _threadSleepTime = 0;
                 }
-                catch (AppDomainUnloadedException ex) //срабатывает при thread.Abort()
+                catch (Exception) //срабатывает при thread.Abort()
                 {
                 }
             }
         }
         #region Работа с Utilcell Smart
-        public List<UtilcellSmart> SmartList = new List<UtilcellSmart>();
-        public void AddSmart(string Name, bool isActivExchangeMode, int RS485Num, int LostConnectionDataCount, int SleepTime)
+        public void AddSmart(string Name, bool isActivExchangeMode, int RS485Num, int NoAnswerLimit, int SleepTime)
         {
+            if (SmartList==null) SmartList = new List<UtilcellSmart>();
             UtilcellSmart sc = new UtilcellSmart();
             sc.Name = Name;
-            sc.Enabled = true;
             sc.isActivExchangeMode = isActivExchangeMode;
             sc.RS485Num = RS485Num;
-            sc.LostConnectionDataCount = (LostConnectionDataCount > 0) ? LostConnectionDataCount : 20;
+            sc.NoAnswerLimit = (NoAnswerLimit > 0) ? NoAnswerLimit : 20;
             sc.SleepTime = (SleepTime > 0) ? SleepTime : 50;
             this.SmartList.Add(sc);
+        }
+        #endregion
+
+        #region Работа с Микросим М06
+        public void AddМ06(string Name, bool isActivExchangeMode, int RS485Num, int NoAnswerLimit, int SleepTime)
+        {
+            if (M06List == null) M06List = new List<MicrosimM06>();
+            MicrosimM06 M06 = new MicrosimM06();
+            M06.Name = Name;
+            M06.isActivExchangeMode = isActivExchangeMode;
+            M06.RS485Num = RS485Num;
+            M06.NoAnswerLimit = (NoAnswerLimit > 0) ? NoAnswerLimit : 20;
+            M06.SleepTime = (SleepTime > 0) ? SleepTime : 50;
+            this.M06List.Add(M06);
         }
         #endregion
 
