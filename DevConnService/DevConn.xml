@@ -5,14 +5,39 @@
     <ApiUserName></ApiUserName>
     <ApiUserPass></ApiUserPass>
   </ServiceOptions>
-  <Connection Type="Com" Name="Connection 1" PortNum="1" BaudRate="9600" Parity="2" ByteSize="8" StopBit="1" DelayReopenPort="0">
-        <Device Name="Весы 1" ExchangeMode="1" RS485="1" NoAnswerLimit="20" DelayTime="500">MicrosimM06</Device>
-
+  
+  <!--
+  <Connection Type="Com" Name="Connection 1" PortNum="2" BaudRate="19200" Parity="0" ByteSize="8" StopBit="2" DelayReopenPort="0">
+    <Device Name="Mitsubishi E5xx 01" RS485="1" NoAnswerLimit="3" DelayTime="100">Mitsubishi_E5xx</Device>
+    <Device Name="Mitsubishi E5xx 02" RS485="2" NoAnswerLimit="3" DelayTime="100">Mitsubishi_E5xx</Device>
+    <Device Name="Mitsubishi E5xx 03" RS485="3" NoAnswerLimit="3" DelayTime="100">Mitsubishi_E5xx</Device>
+    <Device Name="Mitsubishi E5xx 04" RS485="4" NoAnswerLimit="3" DelayTime="100">Mitsubishi_E5xx</Device>
+    <Device Name="Mitsubishi E5xx 05" RS485="5" NoAnswerLimit="3" DelayTime="100">Mitsubishi_E5xx</Device>
+    <Device Name="Mitsubishi E5xx 06" RS485="6" NoAnswerLimit="3" DelayTime="100">Mitsubishi_E5xx</Device>
   </Connection>
+-->
+
+  <Connection Type="Com" Name="Connection 1" PortNum="2" BaudRate="9600" Parity="2" ByteSize="8" StopBit="1" DelayReopenPort="0">
+    <Device Name="ESQ A1000 01" RS485="1" NoAnswerLimit="3" DelayTime="100">ESQ_A1000</Device>
+    <Device Name="ESQ A1000 02" RS485="2" NoAnswerLimit="3" DelayTime="100">ESQ_A1000</Device>
+    <Device Name="ESQ A1000 03" RS485="3" NoAnswerLimit="3" DelayTime="100">ESQ_A1000</Device>
+    <Device Name="ESQ A1000 04" RS485="4" NoAnswerLimit="3" DelayTime="100">ESQ_A1000</Device>
+    <Device Name="ESQ A1000 05" RS485="5" NoAnswerLimit="3" DelayTime="100">ESQ_A1000</Device>
+    <Device Name="ESQ A1000 06" RS485="6" NoAnswerLimit="3" DelayTime="100">ESQ_A1000</Device>
+  </Connection>
+  
+  <Connection Type="Com" Name="Connection 2" PortNum="1" BaudRate="9600" Parity="2" ByteSize="8" StopBit="1" DelayReopenPort="0">
+      <Device Name="Owen 1"  Protocol="0" RS485="1" NoAnswerLimit="20" DelayTime="300">Owen_110_224_1T</Device>
+      <Device Name="Owen 2"  Protocol="0" RS485="2" NoAnswerLimit="20" DelayTime="300">Owen_110_224_1T</Device>
+      <Device Name="Owen 3"  Protocol="0" RS485="3" NoAnswerLimit="20" DelayTime="300">Owen_110_224_1T</Device>
+  </Connection>
+  
+  <!--
   <Connection Type="Com" Name="Connection 2" PortNum="2" BaudRate="9600" Parity="2" ByteSize="8" StopBit="1" DelayReopenPort="0">
-    <Device Name="Весы 2" ExchangeMode="1" RS485="1" NoAnswerLimit="20" DelayTime="500">MicrosimM06</Device>
+    <Device Name="Весы 1" ExchangeMode="1" RS485="1" NoAnswerLimit="20" DelayTime="500">MicrosimM06</Device>
 
   </Connection>
+-->
 </Options>
 
 <!--

@@ -40,7 +40,7 @@
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.Description = "Discription Clear Service";
+            this.serviceInstaller1.Description = "Сервис подключения к устройствам";
             this.serviceInstaller1.ServiceName = "DevConnService";
             // 
             // ProjectInstaller

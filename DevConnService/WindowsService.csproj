@@ -92,10 +92,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiClass\ApiConnection.cs" />
+    <Compile Include="ApiClass\ApiESQ_A1000.cs" />
     <Compile Include="ApiClass\APIMicrosimM06.cs" />
+    <Compile Include="ApiClass\ApiMitsubishiFR_E5xx.cs" />
+    <Compile Include="ApiClass\ApiOwen110_224_1T.cs" />
     <Compile Include="BasicAuthenticationAttribute.cs" />
     <Compile Include="Common.cs" />
+    <Compile Include="Controllers\OtherController.cs" />
     <Compile Include="Controllers\ScaleController.cs" />
+    <Compile Include="CustomExceptionFilter.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>

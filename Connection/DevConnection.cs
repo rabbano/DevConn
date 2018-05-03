@@ -1,9 +1,11 @@
-﻿using Connection.ScaleDev;
+﻿using Connection.AnalogInputDev;
+using Connection.DiscreteIO;
+using Connection.OtherDev;
+using Connection.ScaleDev;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO.Ports;
-using System.Linq;
-using System.Reflection;
 
 using System.Text;
 using System.Threading;
@@ -31,13 +33,18 @@ namespace Connection
 
         public List<UtilcellSmart> SmartList;
         public List<MicrosimM06> M06List;
-
+        public List<Owen_110_224_1T> Owen110_224_1TList;
+        public List<MitsubishiFR_E5xx> MitsubishiFR_E5xxList;
+        public List<MI_MDA_15YA> MI_MDA_15YAList;
+        public List<ESQ_A1000> ESQ_A1000List;
+        public List<I7055> I7055list;
 
         public byte PortState { get; private set; } = 1;//состояние, 1- не открывался, 2- открывался, но с ошибкой, 3- нормально открылся
         //{
         //    get => _portState;
         //}
         private byte _connectionType = 0;//тип соединения, 1- ComPort, 2- TCP
+        internal string uiSep = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
 
         public byte ConnectionType
         {
@@ -102,6 +109,7 @@ namespace Connection
                         try
                         {
                             OpenPortCounter++;
+                            
                             _serialPort = new SerialPort("COM" + _comPortNum.ToString(), _baudRate, _parity, _byteSize, _stopBits);
                             _serialPort.Open();
                             PortState = 3;
@@ -129,7 +137,6 @@ namespace Connection
                     #endregion
                     else 
                     {
-
                         if (M06List != null)
                             foreach (var M06 in M06List)
                             {
@@ -142,6 +149,32 @@ namespace Connection
                                 _threadSleepTime += smart.GetSmartState(this);
                             }
 
+                        if (Owen110_224_1TList != null)
+                            foreach (var owen in Owen110_224_1TList)
+                            {
+                                _threadSleepTime += owen.GetState(this);
+                            }
+
+                        if (MitsubishiFR_E5xxList != null)
+                            foreach (var m in MitsubishiFR_E5xxList)
+                            {
+                                _threadSleepTime += m.GetState(this);
+                            }
+                        if (MI_MDA_15YAList != null)
+                            foreach (var m in MI_MDA_15YAList)
+                            {
+                                _threadSleepTime += m.GetState(this);
+                            }
+                        if (ESQ_A1000List != null)
+                            foreach (var m in ESQ_A1000List)
+                            {
+                                _threadSleepTime += m.GetState(this);
+                            }
+                        if (I7055list != null)
+                            foreach (var m in I7055list)
+                            {
+                                _threadSleepTime += m.GetState(this);
+                            }
                     }
 
                     //Counter++;
@@ -154,6 +187,20 @@ namespace Connection
                 }
             }
         }
+
+        #region Работа Прибором МИ МДА/15Я Россия
+        public void AddMiMda(string Name, bool isActivExchangeMode, int NoAnswerLimit, int SleepTime)
+        {
+            if (MI_MDA_15YAList == null) MI_MDA_15YAList = new List<MI_MDA_15YA>();
+            MI_MDA_15YA mi = new MI_MDA_15YA();
+            mi.Name = Name;
+            mi.isActivExchangeMode = isActivExchangeMode;
+            mi.NoAnswerLimit = (NoAnswerLimit > 0) ? NoAnswerLimit : 20;
+            mi.SleepTime = (SleepTime > 0) ? SleepTime : 50;
+            this.MI_MDA_15YAList.Add(mi);
+        }
+        #endregion
+
         #region Работа с Utilcell Smart
         public void AddSmart(string Name, bool isActivExchangeMode, int RS485Num, int NoAnswerLimit, int SleepTime)
         {
@@ -179,6 +226,47 @@ namespace Connection
             M06.NoAnswerLimit = (NoAnswerLimit > 0) ? NoAnswerLimit : 20;
             M06.SleepTime = (SleepTime > 0) ? SleepTime : 50;
             this.M06List.Add(M06);
+        }
+        #endregion
+
+        #region Работа с Owen_110_224_1T
+        public void AddOwen_110_224_1T(string Name, int Protocol, int RS485Num, int NoAnswerLimit, int SleepTime)
+        {
+            if (Owen110_224_1TList == null) Owen110_224_1TList = new List<Owen_110_224_1T>();
+            Owen_110_224_1T Owen = new Owen_110_224_1T();
+            Owen.Name = Name;
+            Owen.Protocol = (Protocol > 0) ? Protocol : 0;
+            Owen.RS485Num = RS485Num;
+            Owen.NoAnswerLimit = (NoAnswerLimit > 0) ? NoAnswerLimit : 20;
+            Owen.SleepTime = (SleepTime > 0) ? SleepTime : 200;
+            this.Owen110_224_1TList.Add(Owen);
+        }
+        #endregion
+
+        #region Добавление Mitsubishi FR_E5xx
+        public void AddMitsubishiFR_E5xx(string Name, int RS485Num, int NoAnswerLimit, int SleepTime)
+        {
+            if (MitsubishiFR_E5xxList == null) MitsubishiFR_E5xxList = new List<MitsubishiFR_E5xx>();
+            MitsubishiFR_E5xx Mitsubishi = new MitsubishiFR_E5xx();
+            Mitsubishi.Name = Name;
+            Mitsubishi.RS485Num = RS485Num;
+            Mitsubishi.NoAnswerLimit = (NoAnswerLimit > 0) ? NoAnswerLimit : 20;
+            Mitsubishi.SleepTime = (SleepTime > 0) ? SleepTime : 200;
+            this.MitsubishiFR_E5xxList.Add(Mitsubishi);
+        }
+        #endregion
+
+
+        #region Добавление частотника ESQ_A1000
+        public void AddESQ_A1000(string Name, int RS485Num, int NoAnswerLimit, int SleepTime)
+        {
+            if (ESQ_A1000List == null) ESQ_A1000List = new List<ESQ_A1000>();
+            ESQ_A1000 ESQ = new ESQ_A1000();
+            ESQ.Name = Name;
+            ESQ.RS485Num = RS485Num;
+            ESQ.NoAnswerLimit = (NoAnswerLimit > 0) ? NoAnswerLimit : 20;
+            ESQ.SleepTime = (SleepTime > 0) ? SleepTime : 200;
+            this.ESQ_A1000List.Add(ESQ);
         }
         #endregion
 

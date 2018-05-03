@@ -27,9 +27,7 @@ namespace Connection.ScaleDev
         public int RS485Num { get; set; } = 0; //номер прибора в сети
 
         byte[] AnswerByteBuff = new byte[200];
-        //string buffer = string.Empty;
-        //buffer += _port.ReadExisting();
-        //if (buffer.Contains("\r\n"))
+
         int storedBytes = 0;
 
         internal int GetSmartState(DevConnection DevConn)

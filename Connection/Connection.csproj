@@ -41,11 +41,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnalogIO\Owen110_224_1T.cs" />
     <Compile Include="DevConnection.cs" />
+    <Compile Include="DiscreteIO\I7055.cs" />
+    <Compile Include="OtherDev\ESQ_A1000.cs" />
+    <Compile Include="OtherDev\MitsubishiFR_E5xx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScaleDev\MicrosimM06.cs" />
+    <Compile Include="ScaleDev\MiMda15YA.cs" />
     <Compile Include="ScaleDev\ScaleController.cs" />
     <Compile Include="ScaleDev\UtilcellSmart.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

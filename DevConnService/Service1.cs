@@ -59,6 +59,31 @@ namespace DevConnService
                                     int p12 = Convert.ToInt32(d.Attributes["DelayTime"].Value);
                                     Common.ConnList[Common.ConnList.Count - 1].AddМ06(p8, p9, p10, p11, p12);
                                 }
+                                else if (DevType == "Mitsubishi_E5xx")
+                                {
+                                    string p8 = d.Attributes["Name"].Value;
+                                    int p9 = Convert.ToInt32(d.Attributes["RS485"].Value);
+                                    int p10 = Convert.ToInt32(d.Attributes["NoAnswerLimit"].Value);
+                                    int p11 = Convert.ToInt32(d.Attributes["DelayTime"].Value);
+                                    Common.ConnList[Common.ConnList.Count - 1].AddMitsubishiFR_E5xx(p8, p9, p10, p11);
+                                }
+                                else if (DevType == "ESQ_A1000")
+                                {
+                                    string p8 = d.Attributes["Name"].Value;
+                                    int p9 = Convert.ToInt32(d.Attributes["RS485"].Value);
+                                    int p10 = Convert.ToInt32(d.Attributes["NoAnswerLimit"].Value);
+                                    int p11 = Convert.ToInt32(d.Attributes["DelayTime"].Value);
+                                    Common.ConnList[Common.ConnList.Count - 1].AddESQ_A1000(p8, p9, p10, p11);
+                                }
+                                else if (DevType == "Owen_110_224_1T")
+                                {
+                                    string p8 = d.Attributes["Name"].Value;
+                                    int p9 = Convert.ToInt32(d.Attributes["Protocol"].Value);
+                                    int p10 = Convert.ToInt32(d.Attributes["RS485"].Value);
+                                    int p11 = Convert.ToInt32(d.Attributes["NoAnswerLimit"].Value);
+                                    int p12 = Convert.ToInt32(d.Attributes["DelayTime"].Value);
+                                    Common.ConnList[Common.ConnList.Count - 1].AddOwen_110_224_1T(p8, p9, p10, p11, p12);
+                                }
                             }
 
                         }

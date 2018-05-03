@@ -244,7 +244,6 @@ namespace Connection.ScaleDev
                     }
                     catch (Exception ex)
                     {
-
                         ErrGetStateDevice++;
                         //// Get stack trace for the exception with source file information
                         //var st = new StackTrace(ex, true);

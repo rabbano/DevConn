@@ -61,7 +61,6 @@ namespace WindowsService.Controllers
                     {
                         return "Проверьте связь с прибором";
                     }
-
                 }
                 else
                     return "В соединении " + Connection + " Микросим М06 не найден";
